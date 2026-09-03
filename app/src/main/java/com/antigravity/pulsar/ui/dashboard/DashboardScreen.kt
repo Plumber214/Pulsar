@@ -49,6 +49,8 @@ fun DashboardScreen(
     val networkState by viewModel.telemetryRepo.networkState.collectAsState()
     val storageState by viewModel.telemetryRepo.storageState.collectAsState()
     val displayState by viewModel.telemetryRepo.displayState.collectAsState()
+    val gpuState by viewModel.gpuState.collectAsState()
+    val sensorsState by viewModel.sensorsState.collectAsState()
     val specs by viewModel.telemetryRepo.deviceSpecs.collectAsState()
 
     Scaffold(
@@ -107,12 +109,15 @@ fun DashboardScreen(
                 networkState = networkState,
                 storageState = storageState,
                 displayState = displayState,
+                gpuState = gpuState,
+                sensorsState = sensorsState,
                 tempUnit = prefs.temperatureUnit,
                 speedUnit = prefs.speedUnit,
                 isEditing = isEditing,
                 onTileClick = { viewModel.openSpecs(it) },
                 onResizeTile = { id, size -> viewModel.resizeTile(id, size) },
-                onDeleteTile = { viewModel.deleteTile(it) }
+                onDeleteTile = { viewModel.deleteTile(it) },
+                onMoveTile = { id, dir -> viewModel.moveTile(id, dir) }
             )
 
             if (isEditing) {
@@ -142,6 +147,8 @@ fun DashboardScreen(
             memoryState = memoryState,
             batteryState = batteryState,
             displayState = displayState,
+            gpuState = gpuState,
+            sensorsState = sensorsState,
             initialFocusTile = selectedTileForSpecs,
             onDismiss = { viewModel.closeSpecs() }
         )

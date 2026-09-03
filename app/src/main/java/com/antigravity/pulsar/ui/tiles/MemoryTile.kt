@@ -31,6 +31,10 @@ fun MemoryTile(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val totalGb = state.totalRamBytes / (1024f * 1024f * 1024f)
@@ -47,6 +51,10 @@ fun MemoryTile(
         onTileClick = onTileClick,
         onResize = onResize,
         onDelete = onDelete,
+        onMoveBackward = onMoveBackward,
+        onMoveForward = onMoveForward,
+        canMoveBackward = canMoveBackward,
+        canMoveForward = canMoveForward,
         modifier = modifier
     ) {
         when (config.size) {

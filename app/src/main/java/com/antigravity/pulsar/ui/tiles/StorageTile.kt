@@ -28,6 +28,10 @@ fun StorageTile(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val totalGb = state.totalBytes / (1024f * 1024f * 1024f)
@@ -44,6 +48,10 @@ fun StorageTile(
         onTileClick = onTileClick,
         onResize = onResize,
         onDelete = onDelete,
+        onMoveBackward = onMoveBackward,
+        onMoveForward = onMoveForward,
+        canMoveBackward = canMoveBackward,
+        canMoveForward = canMoveForward,
         modifier = modifier
     ) {
         when (config.size) {

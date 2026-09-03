@@ -35,6 +35,10 @@ fun NetworkTile(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val factor = if (speedUnit == SpeedUnit.BITS_PER_SEC) 8f else 1f
@@ -56,6 +60,10 @@ fun NetworkTile(
         onTileClick = onTileClick,
         onResize = onResize,
         onDelete = onDelete,
+        onMoveBackward = onMoveBackward,
+        onMoveForward = onMoveForward,
+        canMoveBackward = canMoveBackward,
+        canMoveForward = canMoveForward,
         modifier = modifier
     ) {
         when (config.size) {

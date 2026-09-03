@@ -39,6 +39,10 @@ fun CpuTile(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     PulsarTileContainer(
@@ -51,6 +55,10 @@ fun CpuTile(
         onTileClick = onTileClick,
         onResize = onResize,
         onDelete = onDelete,
+        onMoveBackward = onMoveBackward,
+        onMoveForward = onMoveForward,
+        canMoveBackward = canMoveBackward,
+        canMoveForward = canMoveForward,
         modifier = modifier
     ) {
         when (config.size) {

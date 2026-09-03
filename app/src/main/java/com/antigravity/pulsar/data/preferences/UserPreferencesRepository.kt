@@ -87,7 +87,7 @@ class UserPreferencesRepository(private val context: Context) {
 
     private fun deserializeTiles(data: String): List<TileConfig> {
         return try {
-            data.split(";").mapNotNull { entry ->
+            val deserialized = data.split(";").mapNotNull { entry ->
                 val parts = entry.split(",")
                 if (parts.size == 3) {
                     val id = TileId.valueOf(parts[0])
@@ -95,6 +95,23 @@ class UserPreferencesRepository(private val context: Context) {
                     val order = parts[2].toIntOrNull() ?: 0
                     TileConfig(id, size, order)
                 } else null
+            }
+            if (deserialized.isEmpty()) {
+                defaultDashboardTiles()
+            } else {
+                val existingIds = deserialized.map { it.id }.toSet()
+                val defaults = defaultDashboardTiles()
+                val missingDefaults = defaults.filter { it.id !in existingIds }
+                if (missingDefaults.isNotEmpty()) {
+                    var maxOrder = deserialized.maxOfOrNull { it.order } ?: 0
+                    val appended = missingDefaults.map {
+                        maxOrder++
+                        it.copy(order = maxOrder)
+                    }
+                    deserialized + appended
+                } else {
+                    deserialized
+                }
             }
         } catch (_: Throwable) {
             defaultDashboardTiles()
@@ -109,7 +126,9 @@ class UserPreferencesRepository(private val context: Context) {
             TileConfig(TileId.THERMAL, TileSize.WIDE, 3),
             TileConfig(TileId.NETWORK, TileSize.WIDE, 4),
             TileConfig(TileId.STORAGE, TileSize.MINI, 5),
-            TileConfig(TileId.DISPLAY, TileSize.MINI, 6)
+            TileConfig(TileId.DISPLAY, TileSize.MINI, 6),
+            TileConfig(TileId.GPU, TileSize.WIDE, 7),
+            TileConfig(TileId.SENSORS, TileSize.WIDE, 8)
         )
     }
 }

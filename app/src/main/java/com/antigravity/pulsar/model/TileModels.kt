@@ -7,7 +7,9 @@ enum class TileId(val title: String, val category: String) {
     THERMAL("Thermals & Headroom", "Sensors"),
     NETWORK("Network Speedometer", "Connectivity"),
     STORAGE("Internal Storage", "Storage"),
-    DISPLAY("Display & Refresh Rate", "Display")
+    DISPLAY("Display & Refresh Rate", "Display"),
+    GPU("Graphics (GPU)", "Compute"),
+    SENSORS("Sensor Array", "Sensors")
 }
 
 enum class TileSize(val colSpan: Int, val rowSpan: Int, val label: String) {

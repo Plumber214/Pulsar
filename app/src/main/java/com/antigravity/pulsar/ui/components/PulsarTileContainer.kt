@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DragHandle
 import androidx.compose.material.icons.filled.OpenInFull
@@ -49,6 +51,10 @@ fun PulsarTileContainer(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier,
     badgeText: String? = null,
     content: @Composable () -> Unit
@@ -114,8 +120,36 @@ fun PulsarTileContainer(
                 if (isEditing) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
+                        if (onMoveBackward != null) {
+                            IconButton(
+                                onClick = onMoveBackward,
+                                enabled = canMoveBackward,
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowBack,
+                                    contentDescription = "Move Left",
+                                    tint = if (canMoveBackward) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                        if (onMoveForward != null) {
+                            IconButton(
+                                onClick = onMoveForward,
+                                enabled = canMoveForward,
+                                modifier = Modifier.size(28.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "Move Right",
+                                    tint = if (canMoveForward) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
                         IconButton(onClick = onDelete, modifier = Modifier.size(28.dp)) {
                             Icon(
                                 imageVector = Icons.Default.Close,

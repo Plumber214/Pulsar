@@ -50,6 +50,8 @@ fun SpecsBottomSheet(
     memoryState: MemoryState,
     batteryState: BatteryState,
     displayState: DisplayState,
+    gpuState: com.antigravity.pulsar.model.GpuState = com.antigravity.pulsar.model.GpuState(),
+    sensorsState: com.antigravity.pulsar.model.SensorsState = com.antigravity.pulsar.model.SensorsState(),
     initialFocusTile: TileId?,
     onDismiss: () -> Unit
 ) {
@@ -138,6 +140,27 @@ fun SpecsBottomSheet(
                         SpecRow("Current Refresh Rate", "${displayState.refreshRateHz.toInt()} Hz")
                         SpecRow("Supported Modes", displayState.supportedRefreshRates.joinToString(", ") { "${it.toInt()}Hz" })
                         SpecRow("HDR Support", if (displayState.isHdrSupported) "Yes (HDR10+ / HLG)" else "Standard Dynamic Range")
+                    }
+                }
+
+                item {
+                    SpecCategoryCard("Graphics (GPU)") {
+                        SpecRow("GPU Renderer", if (gpuState.renderer.isNotBlank()) gpuState.renderer else specs.gpuRenderer)
+                        SpecRow("GPU Vendor", if (gpuState.vendor.isNotBlank()) gpuState.vendor else specs.gpuVendor)
+                        SpecRow("Vulkan API", if (gpuState.vulkanVersion.isNotBlank()) gpuState.vulkanVersion else specs.vulkanVersion)
+                        SpecRow("OpenGL ES Version", gpuState.glesVersion)
+                        SpecRow("GLES Extensions", "${gpuState.extensionCount} Active")
+                    }
+                }
+
+                item {
+                    SpecCategoryCard("Sensor Array") {
+                        SpecRow("Total Sensors", "${sensorsState.totalSensorsCount} Hardware Modules")
+                        val p = sensorsState.pressureHpa
+                        SpecRow("Barometer", if (p != null) "%.2f hPa".format(p) else "Not Equipped")
+                        val lux = sensorsState.lightLux
+                        SpecRow("Ambient Light", if (lux != null) "${lux.toInt()} Lux" else "Not Equipped")
+                        SpecRow("Gravity Vector", "X: %.1f, Y: %.1f, Z: %.1f m/s²".format(sensorsState.accelX, sensorsState.accelY, sensorsState.accelZ))
                     }
                 }
 

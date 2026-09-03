@@ -89,6 +89,23 @@ data class DisplayState(
     val supportedRefreshRates: List<Float> = listOf(60f, 120f)
 )
 
+data class GpuState(
+    val renderer: String = "Detecting GPU...",
+    val vendor: String = "Detecting...",
+    val glesVersion: String = "OpenGL ES 3.2",
+    val vulkanVersion: String = "Vulkan 1.3",
+    val extensionCount: Int = 0
+)
+
+data class SensorsState(
+    val pressureHpa: Float? = null,
+    val lightLux: Float? = null,
+    val accelX: Float = 0f,
+    val accelY: Float = 0f,
+    val accelZ: Float = 9.8f,
+    val totalSensorsCount: Int = 0
+)
+
 data class DeviceSpecs(
     val phoneModel: String = "",
     val manufacturer: String = "",
@@ -103,5 +120,9 @@ data class DeviceSpecs(
     val cpuArchitecture: String = "",
     val armClustersDescription: String = "",
     val ramCapacityFormatted: String = "",
-    val memoryPageSize: String = "4 KB"
+    val memoryPageSize: String = "4 KB",
+    val gpuRenderer: String = "",
+    val gpuVendor: String = "",
+    val vulkanVersion: String = "Vulkan 1.3",
+    val totalSensorsCount: Int = 0
 )

@@ -8,15 +8,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.antigravity.pulsar.model.BatteryState
 import com.antigravity.pulsar.model.CpuState
 import com.antigravity.pulsar.model.DisplayState
+import com.antigravity.pulsar.model.GpuState
 import com.antigravity.pulsar.model.MemoryState
 import com.antigravity.pulsar.model.NetworkState
+import com.antigravity.pulsar.model.SensorsState
 import com.antigravity.pulsar.model.SpeedUnit
 import com.antigravity.pulsar.model.StorageState
 import com.antigravity.pulsar.model.TemperatureUnit
@@ -27,8 +29,10 @@ import com.antigravity.pulsar.model.TileSize
 import com.antigravity.pulsar.ui.tiles.BatteryTile
 import com.antigravity.pulsar.ui.tiles.CpuTile
 import com.antigravity.pulsar.ui.tiles.DisplayTile
+import com.antigravity.pulsar.ui.tiles.GpuTile
 import com.antigravity.pulsar.ui.tiles.MemoryTile
 import com.antigravity.pulsar.ui.tiles.NetworkTile
+import com.antigravity.pulsar.ui.tiles.SensorsTile
 import com.antigravity.pulsar.ui.tiles.StorageTile
 import com.antigravity.pulsar.ui.tiles.ThermalTile
 
@@ -43,12 +47,15 @@ fun BentoGridLayout(
     networkState: NetworkState,
     storageState: StorageState,
     displayState: DisplayState,
+    gpuState: GpuState,
+    sensorsState: SensorsState,
     tempUnit: TemperatureUnit,
     speedUnit: SpeedUnit,
     isEditing: Boolean,
     onTileClick: (TileId) -> Unit,
     onResizeTile: (TileId, TileSize) -> Unit,
     onDeleteTile: (TileId) -> Unit,
+    onMoveTile: (TileId, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -58,13 +65,13 @@ fun BentoGridLayout(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(
+        itemsIndexed(
             items = tiles,
-            key = { it.id.name },
-            span = { item ->
+            key = { _, item -> item.id.name },
+            span = { _, item ->
                 GridItemSpan(item.size.actualColSpan(maxColumns))
             }
-        ) { config ->
+        ) { index, config ->
             val tileHeight = when (config.size) {
                 TileSize.MINI -> 135.dp
                 TileSize.WIDE -> 125.dp
@@ -72,7 +79,14 @@ fun BentoGridLayout(
                 TileSize.DETAILED -> 250.dp
             }
 
-            Box(modifier = Modifier.height(tileHeight)) {
+            val canMoveBack = index > 0
+            val canMoveFwd = index < tiles.size - 1
+
+            Box(
+                modifier = Modifier
+                    .animateItem()
+                    .height(tileHeight)
+            ) {
                 when (config.id) {
                     TileId.CPU -> CpuTile(
                         config = config,
@@ -80,7 +94,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.CPU) },
                         onResize = { onResizeTile(TileId.CPU, it) },
-                        onDelete = { onDeleteTile(TileId.CPU) }
+                        onDelete = { onDeleteTile(TileId.CPU) },
+                        onMoveBackward = { onMoveTile(TileId.CPU, -1) },
+                        onMoveForward = { onMoveTile(TileId.CPU, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.BATTERY -> BatteryTile(
                         config = config,
@@ -89,7 +107,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.BATTERY) },
                         onResize = { onResizeTile(TileId.BATTERY, it) },
-                        onDelete = { onDeleteTile(TileId.BATTERY) }
+                        onDelete = { onDeleteTile(TileId.BATTERY) },
+                        onMoveBackward = { onMoveTile(TileId.BATTERY, -1) },
+                        onMoveForward = { onMoveTile(TileId.BATTERY, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.MEMORY -> MemoryTile(
                         config = config,
@@ -97,7 +119,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.MEMORY) },
                         onResize = { onResizeTile(TileId.MEMORY, it) },
-                        onDelete = { onDeleteTile(TileId.MEMORY) }
+                        onDelete = { onDeleteTile(TileId.MEMORY) },
+                        onMoveBackward = { onMoveTile(TileId.MEMORY, -1) },
+                        onMoveForward = { onMoveTile(TileId.MEMORY, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.THERMAL -> ThermalTile(
                         config = config,
@@ -106,7 +132,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.THERMAL) },
                         onResize = { onResizeTile(TileId.THERMAL, it) },
-                        onDelete = { onDeleteTile(TileId.THERMAL) }
+                        onDelete = { onDeleteTile(TileId.THERMAL) },
+                        onMoveBackward = { onMoveTile(TileId.THERMAL, -1) },
+                        onMoveForward = { onMoveTile(TileId.THERMAL, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.NETWORK -> NetworkTile(
                         config = config,
@@ -115,7 +145,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.NETWORK) },
                         onResize = { onResizeTile(TileId.NETWORK, it) },
-                        onDelete = { onDeleteTile(TileId.NETWORK) }
+                        onDelete = { onDeleteTile(TileId.NETWORK) },
+                        onMoveBackward = { onMoveTile(TileId.NETWORK, -1) },
+                        onMoveForward = { onMoveTile(TileId.NETWORK, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.STORAGE -> StorageTile(
                         config = config,
@@ -123,7 +157,11 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.STORAGE) },
                         onResize = { onResizeTile(TileId.STORAGE, it) },
-                        onDelete = { onDeleteTile(TileId.STORAGE) }
+                        onDelete = { onDeleteTile(TileId.STORAGE) },
+                        onMoveBackward = { onMoveTile(TileId.STORAGE, -1) },
+                        onMoveForward = { onMoveTile(TileId.STORAGE, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                     TileId.DISPLAY -> DisplayTile(
                         config = config,
@@ -131,7 +169,35 @@ fun BentoGridLayout(
                         isEditing = isEditing,
                         onTileClick = { onTileClick(TileId.DISPLAY) },
                         onResize = { onResizeTile(TileId.DISPLAY, it) },
-                        onDelete = { onDeleteTile(TileId.DISPLAY) }
+                        onDelete = { onDeleteTile(TileId.DISPLAY) },
+                        onMoveBackward = { onMoveTile(TileId.DISPLAY, -1) },
+                        onMoveForward = { onMoveTile(TileId.DISPLAY, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
+                    )
+                    TileId.GPU -> GpuTile(
+                        config = config,
+                        state = gpuState,
+                        isEditing = isEditing,
+                        onTileClick = { onTileClick(TileId.GPU) },
+                        onResize = { onResizeTile(TileId.GPU, it) },
+                        onDelete = { onDeleteTile(TileId.GPU) },
+                        onMoveBackward = { onMoveTile(TileId.GPU, -1) },
+                        onMoveForward = { onMoveTile(TileId.GPU, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
+                    )
+                    TileId.SENSORS -> SensorsTile(
+                        config = config,
+                        state = sensorsState,
+                        isEditing = isEditing,
+                        onTileClick = { onTileClick(TileId.SENSORS) },
+                        onResize = { onResizeTile(TileId.SENSORS, it) },
+                        onDelete = { onDeleteTile(TileId.SENSORS) },
+                        onMoveBackward = { onMoveTile(TileId.SENSORS, -1) },
+                        onMoveForward = { onMoveTile(TileId.SENSORS, 1) },
+                        canMoveBackward = canMoveBack,
+                        canMoveForward = canMoveFwd
                     )
                 }
             }

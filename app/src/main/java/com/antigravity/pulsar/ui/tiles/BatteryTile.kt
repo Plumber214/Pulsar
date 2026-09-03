@@ -32,6 +32,10 @@ fun BatteryTile(
     onTileClick: () -> Unit,
     onResize: (TileSize) -> Unit,
     onDelete: () -> Unit,
+    onMoveBackward: (() -> Unit)? = null,
+    onMoveForward: (() -> Unit)? = null,
+    canMoveBackward: Boolean = false,
+    canMoveForward: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val tempDisplay = "${tempUnit.fromCelsius(state.temperatureCelsius).toInt()}${tempUnit.symbol}"
@@ -46,6 +50,10 @@ fun BatteryTile(
         onTileClick = onTileClick,
         onResize = onResize,
         onDelete = onDelete,
+        onMoveBackward = onMoveBackward,
+        onMoveForward = onMoveForward,
+        canMoveBackward = canMoveBackward,
+        canMoveForward = canMoveForward,
         modifier = modifier
     ) {
         when (config.size) {

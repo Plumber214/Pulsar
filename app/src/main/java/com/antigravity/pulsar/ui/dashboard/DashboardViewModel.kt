@@ -24,6 +24,9 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     val telemetryRepo = TelemetryRepository(application)
     val preferencesRepo = UserPreferencesRepository(application)
 
+    val gpuState = telemetryRepo.gpuState
+    val sensorsState = telemetryRepo.sensorsState
+
     val preferences: StateFlow<UserPreferences> = preferencesRepo.userPreferencesFlow
         .stateIn(viewModelScope, SharingStarted.Eagerly, UserPreferences())
 
@@ -87,11 +90,26 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun moveTile(tileId: TileId, direction: Int) {
+        viewModelScope.launch {
+            val current = tiles.value.toMutableList()
+            val index = current.indexOfFirst { it.id == tileId }
+            if (index == -1) return@launch
+            val newIndex = index + direction
+            if (newIndex in 0 until current.size) {
+                val item = current.removeAt(index)
+                current.add(newIndex, item)
+                val reindexed = current.mapIndexed { i, config -> config.copy(order = i) }
+                preferencesRepo.saveDashboardTiles(reindexed)
+            }
+        }
+    }
+
     fun addTile(tileId: TileId) {
         viewModelScope.launch {
             val defaultSize = when (tileId) {
                 TileId.CPU, TileId.BATTERY -> TileSize.STANDARD
-                TileId.MEMORY, TileId.THERMAL, TileId.NETWORK -> TileSize.WIDE
+                TileId.MEMORY, TileId.THERMAL, TileId.NETWORK, TileId.GPU, TileId.SENSORS -> TileSize.WIDE
                 TileId.STORAGE, TileId.DISPLAY -> TileSize.MINI
             }
             val newTile = TileConfig(tileId, defaultSize, tiles.value.size)
