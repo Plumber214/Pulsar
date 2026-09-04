@@ -32,7 +32,68 @@
 
         <!-- Home Screen Widgets (Jetpack Glance) -->
         <receiver
+            android:name=".widget.PulsarCpuDialWidgetReceiver"
+            android:label="@string/widget_cpu_dial_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pulsar_cpu_dial_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.PulsarTempDialWidgetReceiver"
+            android:label="@string/widget_temp_dial_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pulsar_temp_dial_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.PulsarBatteryDialWidgetReceiver"
+            android:label="@string/widget_battery_dial_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pulsar_battery_dial_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.PulsarRamDialWidgetReceiver"
+            android:label="@string/widget_ram_dial_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pulsar_ram_dial_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.PulsarDualDialWidgetReceiver"
+            android:label="@string/widget_dual_dial_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/pulsar_dual_dial_widget_info" />
+        </receiver>
+
+        <receiver
             android:name=".widget.PulsarMiniGaugeWidgetReceiver"
+            android:label="Pulsar Gauge (Legacy)"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -44,6 +105,7 @@
 
         <receiver
             android:name=".widget.PulsarSystemBarWidgetReceiver"
+            android:label="@string/widget_system_bar_name"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

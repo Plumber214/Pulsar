@@ -78,6 +78,9 @@ class PulsarMonitorService : Service() {
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 manager.notify(NOTIFICATION_ID, notification)
 
+                // Keep home screen widgets fresh during active monitoring
+                com.antigravity.pulsar.widget.PulsarWidgetUpdater.updateAllWidgets(applicationContext)
+
                 delay(3000L)
             }
         }

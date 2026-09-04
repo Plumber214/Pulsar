@@ -1,3 +1,15 @@
-﻿<resources>
+<resources>
     <string name="app_name">Pulsar</string>
+    <string name="widget_cpu_dial_name">Pulsar CPU Dial</string>
+    <string name="widget_cpu_dial_desc">Compact round dial displaying CPU load and frequency.</string>
+    <string name="widget_temp_dial_name">Pulsar Thermal Dial</string>
+    <string name="widget_temp_dial_desc">Compact round dial displaying SoC temperature and thermal state.</string>
+    <string name="widget_battery_dial_name">Pulsar Battery Dial</string>
+    <string name="widget_battery_dial_desc">Compact round dial displaying battery level and charging rate.</string>
+    <string name="widget_ram_dial_name">Pulsar RAM Dial</string>
+    <string name="widget_ram_dial_desc">Compact round dial displaying memory usage and available RAM.</string>
+    <string name="widget_dual_dial_name">Pulsar Dual Dial</string>
+    <string name="widget_dual_dial_desc">Dual capsule widget displaying side-by-side CPU and Thermal dials.</string>
+    <string name="widget_system_bar_name">Pulsar System Bar</string>
+    <string name="widget_system_bar_desc">Horizontal multi-metric telemetry bar with level indicators.</string>
 </resources>
