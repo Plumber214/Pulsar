@@ -59,6 +59,7 @@ class PulsarHudService : Service(), LifecycleOwner, SavedStateRegistryOwner, Vie
 
     private lateinit var windowManager: WindowManager
     private var composeView: ComposeView? = null
+    private var windowParams: WindowManager.LayoutParams? = null
     private val fpsMeter = FpsMeter()
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -129,7 +130,7 @@ class PulsarHudService : Service(), LifecycleOwner, SavedStateRegistryOwner, Vie
             return
         }
 
-        val telemetryRepo = TelemetryRepository(applicationContext)
+        val telemetryRepo = TelemetryRepository.getInstance(applicationContext)
         val prefsRepo = UserPreferencesRepository(applicationContext)
 
         val layoutFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -143,14 +144,17 @@ class PulsarHudService : Service(), LifecycleOwner, SavedStateRegistryOwner, Vie
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             layoutFlag,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            @Suppress("DEPRECATION")
+            (WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED),
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
             x = 40
             y = 220
         }
+        windowParams = params
 
         composeView = ComposeView(this).apply {
             setViewTreeLifecycleOwner(this@PulsarHudService)
@@ -174,26 +178,30 @@ class PulsarHudService : Service(), LifecycleOwner, SavedStateRegistryOwner, Vie
                         thermalState = thermalState,
                         tempUnit = prefs.temperatureUnit,
                         onDrag = { dx, dy ->
-                            params.x += dx.toInt()
-                            params.y += dy.toInt()
+                            val metrics = resources.displayMetrics
+                            params.x = (params.x + dx.toInt()).coerceIn(0, metrics.widthPixels)
+                            params.y = (params.y + dy.toInt()).coerceIn(0, metrics.heightPixels)
                             try {
                                 windowManager.updateViewLayout(this@apply, params)
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 // View detached or ignored
                             }
                         },
                         onDragEnd = {
                             val displayMetrics = resources.displayMetrics
                             val screenWidth = displayMetrics.widthPixels
-                            val viewWidth = this@apply.width
+                            val screenHeight = displayMetrics.heightPixels
+                            val viewWidth = this@apply.width.takeIf { it > 0 } ?: 200
+                            val viewHeight = this@apply.height.takeIf { it > 0 } ?: 100
                             if (params.x + (viewWidth / 2) < screenWidth / 2) {
                                 params.x = 24
                             } else {
                                 params.x = (screenWidth - viewWidth - 24).coerceAtLeast(24)
                             }
+                            params.y = params.y.coerceIn(60, (screenHeight - viewHeight - 60).coerceAtLeast(60))
                             try {
                                 windowManager.updateViewLayout(this@apply, params)
-                            } catch (e: Exception) {
+                            } catch (_: Exception) {
                                 // Ignore
                             }
                         },
@@ -211,6 +219,27 @@ class PulsarHudService : Service(), LifecycleOwner, SavedStateRegistryOwner, Vie
             e.printStackTrace()
             stopSelf()
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        clampOverlayPosition()
+    }
+
+    private fun clampOverlayPosition() {
+        val view = composeView ?: return
+        val params = windowParams ?: return
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+        val viewWidth = view.width.takeIf { it > 0 } ?: 200
+        val viewHeight = view.height.takeIf { it > 0 } ?: 100
+
+        params.x = params.x.coerceIn(16, (screenWidth - viewWidth - 16).coerceAtLeast(16))
+        params.y = params.y.coerceIn(60, (screenHeight - viewHeight - 60).coerceAtLeast(60))
+        try {
+            windowManager.updateViewLayout(view, params)
+        } catch (_: Exception) {}
     }
 
     private fun createNotificationChannel() {

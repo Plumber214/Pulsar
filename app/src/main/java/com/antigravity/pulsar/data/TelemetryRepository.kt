@@ -26,7 +26,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class TelemetryRepository(private val context: Context) {
+class TelemetryRepository private constructor(private val context: Context) {
+
+    companion object {
+        @Volatile
+        private var instance: TelemetryRepository? = null
+
+        fun getInstance(context: Context): TelemetryRepository {
+            return instance ?: synchronized(this) {
+                instance ?: TelemetryRepository(context.applicationContext).also { instance = it }
+            }
+        }
+
+        operator fun invoke(context: Context): TelemetryRepository = getInstance(context)
+    }
 
     private val deviceSpecsProvider = DeviceSpecsProvider(context)
     private val cpuProvider = CpuProvider(deviceSpecsProvider)

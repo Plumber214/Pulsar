@@ -1,5 +1,6 @@
 package com.antigravity.pulsar.ui.diagnostics
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,6 +60,9 @@ fun DiagnosticsScreen(
     val sensorsState by viewModel.sensorsState.collectAsState()
 
     var activeTest by remember { mutableStateOf<DiagnosticTestType?>(null) }
+    BackHandler(enabled = activeTest != null) {
+        activeTest = null
+    }
     val testResults = remember {
         mutableStateMapOf<DiagnosticTestType, DiagnosticStatus>().apply {
             DiagnosticTestType.entries.forEach { this[it] = DiagnosticStatus.UNTESTED }

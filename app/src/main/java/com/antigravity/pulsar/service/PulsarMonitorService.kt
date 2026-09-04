@@ -48,7 +48,7 @@ class PulsarMonitorService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        telemetryRepo = TelemetryRepository(applicationContext)
+        telemetryRepo = TelemetryRepository.getInstance(applicationContext)
         createNotificationChannel()
     }
 
@@ -71,7 +71,8 @@ class PulsarMonitorService : Service() {
                 val bat = telemetryRepo.batteryState.value
 
                 val title = "Pulsar: ${cpu.overallLoad.toInt()}% CPU • ${mem.usedPercentage.toInt()}% RAM"
-                val content = "Battery: ${bat.levelPercentage}% • ${if (bat.isCharging) "Charging" else "Discharging"} (%.1f W)".format(bat.chargingWatts)
+                val wattsFormatted = "%.1f".format(bat.chargingWatts)
+                val content = "Battery: ${bat.levelPercentage}% • ${if (bat.isCharging) "Charging" else "Discharging"} (${wattsFormatted} W)"
 
                 val notification = buildNotification(title, content)
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

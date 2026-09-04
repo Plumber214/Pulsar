@@ -21,8 +21,9 @@ import kotlinx.coroutines.launch
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
 
-    val telemetryRepo = TelemetryRepository(application)
+    val telemetryRepo = TelemetryRepository.getInstance(application)
     val preferencesRepo = UserPreferencesRepository(application)
+    val gridState = androidx.compose.foundation.lazy.grid.LazyGridState()
 
     val gpuState = telemetryRepo.gpuState
     val sensorsState = telemetryRepo.sensorsState

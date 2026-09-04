@@ -138,7 +138,8 @@ fun DashboardScreen(
                 onTileClick = { viewModel.openSpecs(it) },
                 onResizeTile = { id, size -> viewModel.resizeTile(id, size) },
                 onDeleteTile = { viewModel.deleteTile(it) },
-                onMoveTile = { id, dir -> viewModel.moveTile(id, dir) }
+                onMoveTile = { id, dir -> viewModel.moveTile(id, dir) },
+                gridState = viewModel.gridState
             )
 
             if (isEditing) {

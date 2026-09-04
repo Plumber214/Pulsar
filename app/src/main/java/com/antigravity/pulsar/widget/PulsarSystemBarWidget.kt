@@ -29,7 +29,7 @@ import com.antigravity.pulsar.data.TelemetryRepository
 
 class PulsarSystemBarWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val repo = TelemetryRepository(context)
+        val repo = TelemetryRepository.getInstance(context)
         val cpu = repo.cpuState.value
         val mem = repo.memoryState.value
         val battery = repo.batteryState.value

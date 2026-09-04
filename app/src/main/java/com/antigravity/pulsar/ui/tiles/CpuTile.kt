@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material3.MaterialTheme
@@ -181,8 +181,12 @@ fun CpuTile(
                         )
                     }
 
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(state.cores) { core ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        state.cores.forEach { core ->
                             PulsarMultiCoreBar(core = core, barColor = PulsarTeal)
                         }
                     }

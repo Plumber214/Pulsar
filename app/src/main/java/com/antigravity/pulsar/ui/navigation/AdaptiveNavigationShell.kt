@@ -1,5 +1,7 @@
 package com.antigravity.pulsar.ui.navigation
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -37,6 +39,9 @@ fun AdaptiveNavigationShell(
     modifier: Modifier = Modifier
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    BackHandler(enabled = selectedTab != 0) {
+        selectedTab = 0
+    }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val widthDp = maxWidth
@@ -85,8 +90,12 @@ fun AdaptiveNavigationShell(
                 },
                 modifier = Modifier.fillMaxSize()
             ) { innerPadding ->
-                Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-                    if (selectedTab == 0) {
+                Crossfade(
+                    targetState = selectedTab,
+                    label = "PhoneTabCrossfade",
+                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                ) { tab ->
+                    if (tab == 0) {
                         DashboardScreen(
                             viewModel = viewModel,
                             maxColumns = columns
@@ -131,8 +140,12 @@ fun AdaptiveNavigationShell(
                     )
                 }
 
-                Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                    if (selectedTab == 0) {
+                Crossfade(
+                    targetState = selectedTab,
+                    label = "TabletTabCrossfade",
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                ) { tab ->
+                    if (tab == 0) {
                         DashboardScreen(
                             viewModel = viewModel,
                             maxColumns = columns

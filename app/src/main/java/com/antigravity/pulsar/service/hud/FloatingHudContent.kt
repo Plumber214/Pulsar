@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DragIndicator
@@ -157,10 +160,14 @@ fun FloatingHudContent(
                 color = Color(0xF20F141E),
                 border = BorderStroke(1.2.dp, PulsarTeal.copy(alpha = 0.7f)),
                 shadowElevation = 12.dp,
-                modifier = Modifier.width(260.dp)
+                modifier = Modifier
+                    .width(260.dp)
+                    .heightIn(max = 290.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier
+                        .padding(12.dp)
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     // Header Row
@@ -270,8 +277,9 @@ fun FloatingHudContent(
                     ) {
                         Column {
                             Text(text = "Battery", style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+                            val wattsFormatted = "%.1f".format(batteryState.chargingWatts)
                             Text(
-                                text = "${batteryState.levelPercentage}% (%.1fW)".format(batteryState.chargingWatts),
+                                text = "${batteryState.levelPercentage}% (${wattsFormatted}W)",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = PulsarGreen
                             )

@@ -57,12 +57,23 @@ class MemoryProvider(private val context: Context) {
         return map
     }
 
+    private var isZramReadable: Boolean? = null
+
     private fun calculateZramCompression(): Float {
+        if (isZramReadable == false) return 2.1f
         return try {
-            val orig = File("/sys/block/zram0/orig_data_size").readText().trim().toFloatOrNull() ?: 0f
-            val compr = File("/sys/block/zram0/compr_data_size").readText().trim().toFloatOrNull() ?: 0f
+            val origFile = File("/sys/block/zram0/orig_data_size")
+            val comprFile = File("/sys/block/zram0/compr_data_size")
+            if (!origFile.canRead() || !comprFile.canRead()) {
+                isZramReadable = false
+                return 2.1f
+            }
+            val orig = origFile.readText().trim().toFloatOrNull() ?: 0f
+            val compr = comprFile.readText().trim().toFloatOrNull() ?: 0f
+            isZramReadable = true
             if (compr > 0f) orig / compr else 2.1f
         } catch (_: Throwable) {
+            isZramReadable = false
             2.1f // Default representative compression factor
         }
     }

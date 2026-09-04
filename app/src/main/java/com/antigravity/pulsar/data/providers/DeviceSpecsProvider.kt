@@ -9,7 +9,17 @@ import java.io.RandomAccessFile
 
 class DeviceSpecsProvider(private val context: Context) {
 
+    @Volatile
+    private var cachedSpecs: DeviceSpecs? = null
+
     fun getDeviceSpecs(): DeviceSpecs {
+        cachedSpecs?.let { return it }
+        val specs = computeDeviceSpecs()
+        cachedSpecs = specs
+        return specs
+    }
+
+    private fun computeDeviceSpecs(): DeviceSpecs {
         val socInfo = resolveSocIdentity()
         val kernelVersion = readKernelVersion()
         val pageSize = detectPageSize()
