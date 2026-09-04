@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -88,12 +89,15 @@ fun AdaptiveNavigationShell(
                         )
                     }
                 },
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 modifier = Modifier.fillMaxSize()
             ) { innerPadding ->
                 Crossfade(
                     targetState = selectedTab,
                     label = "PhoneTabCrossfade",
-                    modifier = Modifier.fillMaxSize().padding(innerPadding)
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = innerPadding.calculateBottomPadding())
                 ) { tab ->
                     if (tab == 0) {
                         DashboardScreen(
