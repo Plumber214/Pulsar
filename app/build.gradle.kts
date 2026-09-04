@@ -1,8 +1,28 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
 }
+
+// Build identity is derived from git so it advances on its own with every build.
+// Falls back to safe defaults when git is unavailable (source zip, fresh CI image).
+fun git(vararg args: String): String? = runCatching {
+    providers.exec {
+        commandLine("git", *args)
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().trim().ifEmpty { null }
+}.getOrNull()
+
+val gitCommitCount = git("rev-list", "--count", "HEAD")?.toIntOrNull() ?: 1
+val gitSha = git("rev-parse", "--short", "HEAD") ?: "nogit"
+val isWorkingTreeDirty = git("status", "--porcelain") != null
+// A trailing "+" marks a build made on top of uncommitted local changes.
+val buildNumber = if (isWorkingTreeDirty) "$gitCommitCount+" else "$gitCommitCount"
+val buildTimestamp = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date())
 
 android {
     namespace = "com.antigravity.pulsar"
@@ -12,8 +32,12 @@ android {
         applicationId = "com.antigravity.pulsar"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = gitCommitCount
+        versionName = "1.2.0"
+
+        buildConfigField("String", "BUILD_NUMBER", "\"$buildNumber\"")
+        buildConfigField("String", "GIT_SHA", "\"$gitSha\"")
+        buildConfigField("String", "BUILD_TIME", "\"$buildTimestamp\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -39,6 +63,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     packaging {
         resources {
