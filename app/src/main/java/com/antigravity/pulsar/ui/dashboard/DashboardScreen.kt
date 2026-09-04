@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DashboardCustomize
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -53,6 +56,10 @@ fun DashboardScreen(
     val sensorsState by viewModel.sensorsState.collectAsState()
     val specs by viewModel.telemetryRepo.deviceSpecs.collectAsState()
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val isHudActive by com.antigravity.pulsar.service.hud.PulsarHudService.isHudActive.collectAsState()
+    val canUndo by viewModel.canUndo.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -71,10 +78,24 @@ fun DashboardScreen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = { com.antigravity.pulsar.service.hud.PulsarHudService.toggle(context) }) {
+                        Icon(
+                            imageVector = Icons.Default.Layers,
+                            contentDescription = "Toggle Floating HUD",
+                            tint = if (isHudActive) PulsarTeal else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    IconButton(onClick = { viewModel.openAddTile() }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Tile",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                     IconButton(onClick = { viewModel.toggleEditing() }) {
                         Icon(
-                            imageVector = if (isEditing) Icons.Default.Check else Icons.Default.DashboardCustomize,
-                            contentDescription = if (isEditing) "Done Editing" else "Customize Dashboard",
+                            imageVector = if (isEditing) Icons.Default.Check else Icons.Default.Edit,
+                            contentDescription = if (isEditing) "Done Editing" else "Edit Dashboard",
                             tint = if (isEditing) PulsarTeal else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -122,8 +143,9 @@ fun DashboardScreen(
 
             if (isEditing) {
                 EditModeBar(
-                    onAddTile = { viewModel.setAddTileOpen(true) },
-                    onResetDefaults = { viewModel.resetDefaults() },
+                    onAddTile = { viewModel.openAddTile() },
+                    onUndo = { viewModel.undo() },
+                    canUndo = canUndo,
                     onDone = { viewModel.setEditing(false) },
                     modifier = Modifier.align(Alignment.BottomCenter)
                 )

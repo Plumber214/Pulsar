@@ -4,15 +4,22 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.antigravity.pulsar.model.StorageState
 import com.antigravity.pulsar.model.TileConfig
 import com.antigravity.pulsar.model.TileSize
@@ -64,11 +71,70 @@ fun StorageTile(
                     subText = "Used"
                 )
             }
-            TileSize.WIDE, TileSize.STANDARD, TileSize.DETAILED -> {
+            TileSize.WIDE -> {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "${state.usedPercentage.toInt()}%",
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Used: %.1f GB".format(usedGb),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = PulsarYellow
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(
+                            text = "Storage Capacity",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold, fontSize = 10.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        LinearProgressIndicator(
+                            progress = { (state.usedPercentage / 100f).coerceIn(0.05f, 1f) },
+                            modifier = Modifier
+                                .width(88.dp)
+                                .height(5.dp)
+                                .clip(RoundedCornerShape(2.5.dp)),
+                            color = PulsarYellow,
+                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                        )
+                        Text(
+                            text = "Total: %.1f GB".format(totalGb),
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
+                    Column(horizontalAlignment = Alignment.End) {
+                        Text(
+                            text = "%.1f GB".format(freeGb),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Free Space",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            }
+            TileSize.STANDARD, TileSize.DETAILED -> {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     PulsarRadialGauge(
                         value = state.usedPercentage,
@@ -77,10 +143,14 @@ fun StorageTile(
                         arcColor = PulsarYellow,
                         subText = "Storage"
                     )
-                    Column(horizontalAlignment = Alignment.Start) {
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
                         Text(
                             text = "Used: %.1f GB".format(usedGb),
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = PulsarYellow
                         )
                         Text(

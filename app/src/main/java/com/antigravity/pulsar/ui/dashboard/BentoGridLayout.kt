@@ -61,7 +61,12 @@ fun BentoGridLayout(
     LazyVerticalGrid(
         columns = GridCells.Fixed(maxColumns),
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+        contentPadding = PaddingValues(
+            start = 16.dp,
+            end = 16.dp,
+            top = 12.dp,
+            bottom = if (isEditing) 88.dp else 16.dp
+        ),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -72,12 +77,13 @@ fun BentoGridLayout(
                 GridItemSpan(item.size.actualColSpan(maxColumns))
             }
         ) { index, config ->
-            val tileHeight = when (config.size) {
-                TileSize.MINI -> 135.dp
-                TileSize.WIDE -> 125.dp
-                TileSize.STANDARD -> 175.dp
-                TileSize.DETAILED -> 250.dp
+            val baseHeight = when (config.size) {
+                TileSize.MINI -> 140.dp
+                TileSize.WIDE -> 140.dp
+                TileSize.STANDARD -> 180.dp
+                TileSize.DETAILED -> 255.dp
             }
+            val tileHeight = baseHeight + if (isEditing) 35.dp else 0.dp
 
             val canMoveBack = index > 0
             val canMoveFwd = index < tiles.size - 1

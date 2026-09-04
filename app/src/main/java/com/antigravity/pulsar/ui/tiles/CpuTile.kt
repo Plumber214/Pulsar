@@ -73,23 +73,45 @@ fun CpuTile(
             }
             TileSize.WIDE -> {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(modifier = Modifier.weight(0.45f)) {
+                    Column(modifier = Modifier.weight(0.35f)) {
                         Text(
                             text = "${state.overallLoad.toInt()}%",
-                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "${state.currentAvgFreqMhz} MHz Avg",
+                            text = "${state.currentAvgFreqMhz} MHz",
                             style = MaterialTheme.typography.labelSmall,
                             color = PulsarTeal
                         )
                     }
-                    Box(modifier = Modifier.weight(0.55f).height(50.dp)) {
+                    Column(
+                        modifier = Modifier.weight(0.30f).padding(horizontal = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        androidx.compose.material3.Surface(
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(4.dp),
+                            color = PulsarTeal.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = "${state.coreCount} Cores",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                                color = PulsarTeal,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
+                        Text(
+                            text = "Peak: ${state.peakFreqMhz} MHz",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Box(modifier = Modifier.weight(0.35f).height(48.dp)) {
                         PulsarSparkline(
                             history = state.loadHistory,
                             lineColor = PulsarTeal

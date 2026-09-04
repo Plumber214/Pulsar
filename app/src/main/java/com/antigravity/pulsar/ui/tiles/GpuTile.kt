@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VideogameAsset
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -75,31 +77,54 @@ fun GpuTile(
             }
             TileSize.WIDE -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column {
+                    Column(modifier = Modifier.weight(0.42f)) {
                         Text(
                             text = state.renderer,
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            color = PulsarMagenta
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold, fontSize = 13.sp),
+                            color = PulsarMagenta,
+                            maxLines = 1
                         )
                         Text(
-                            text = "Vendor: ${state.vendor}",
+                            text = state.vendor,
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Column(horizontalAlignment = Alignment.End) {
+                    Column(
+                        modifier = Modifier.weight(0.26f).padding(horizontal = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = PulsarMagenta.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = "Vulkan",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                                color = PulsarMagenta,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+                        Text(
+                            text = "${state.extensionCount} Exts",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Column(modifier = Modifier.weight(0.32f), horizontalAlignment = Alignment.End) {
                         Text(
                             text = state.vulkanVersion,
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "${state.extensionCount} GLES Exts",
-                            style = MaterialTheme.typography.labelSmall,
+                            text = state.glesVersion.take(14),
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }

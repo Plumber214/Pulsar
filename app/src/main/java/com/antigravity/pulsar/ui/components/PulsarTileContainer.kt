@@ -183,27 +183,29 @@ fun PulsarTileContainer(
             // Edit Mode Size Selector Chips Row
             AnimatedVisibility(visible = isEditing) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TileSize.entries.forEach { sizeOption ->
                         val isSelected = config.size == sizeOption
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(6.dp),
                             color = if (isSelected) accentColor else MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier
                                 .clickable { onResize(sizeOption) }
-                                .padding(horizontal = 2.dp)
+                                .padding(horizontal = 1.dp)
                         ) {
                             Text(
                                 text = sizeOption.label,
                                 style = MaterialTheme.typography.labelSmall.copy(
                                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    fontSize = 10.sp
+                                    fontSize = 9.sp
                                 ),
                                 color = if (isSelected) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
                         }
                     }

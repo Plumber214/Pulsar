@@ -9,6 +9,7 @@ val PulsarOrange = Color(0xFFFF9100)
 val PulsarRed = Color(0xFFFF5252)
 val PulsarBlue = Color(0xFF448AFF)
 val PulsarYellow = Color(0xFFFFD600)
+val PulsarMagenta = Color(0xFFE040FB)
 
 val DarkBackground = Color(0xFF101316)
 val DarkSurface = Color(0xFF191D22)

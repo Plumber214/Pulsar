@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -79,14 +82,14 @@ fun NetworkTile(
             }
             TileSize.WIDE -> {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(modifier = Modifier.weight(0.45f)) {
+                    Column(modifier = Modifier.weight(0.35f)) {
                         Text(
                             text = "↓ $rxText",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                             color = PulsarBlue
                         )
                         Text(
@@ -95,7 +98,31 @@ fun NetworkTile(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Box(modifier = Modifier.weight(0.55f).height(50.dp)) {
+                    Column(
+                        modifier = Modifier.weight(0.30f).padding(horizontal = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = PulsarBlue.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = if (state.isWifiConnected) "${state.wifiLinkSpeedMbps} Mbps" else state.cellularNetworkType,
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                                color = PulsarBlue,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                            )
+                        }
+                        if (state.wifiFrequencyGhz > 0f) {
+                            Text(
+                                text = "${state.wifiFrequencyGhz} GHz",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    Box(modifier = Modifier.weight(0.35f).height(48.dp)) {
                         PulsarSparkline(
                             history = state.downloadHistoryMb,
                             lineColor = PulsarBlue
@@ -105,9 +132,9 @@ fun NetworkTile(
             }
             TileSize.STANDARD -> {
                 Row(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     PulsarRadialGauge(
                         value = (rxValue * 10f).coerceIn(0f, 100f),
@@ -117,10 +144,14 @@ fun NetworkTile(
                         displayValueText = "%.1f".format(rxValue),
                         subText = "Down $unitSuffix"
                     )
-                    Column(horizontalAlignment = Alignment.Start) {
+                    Column(
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
                         Text(
                             text = "Down: $rxText",
-                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                             color = PulsarBlue
                         )
                         Text(
@@ -128,18 +159,22 @@ fun NetworkTile(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        Text(
-                            text = if (state.isWifiConnected) "Link: ${state.wifiLinkSpeedMbps} Mbps" else "Cell: ${state.cellularNetworkType}",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        if (state.wifiFrequencyGhz > 0f) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = PulsarBlue.copy(alpha = 0.15f)
+                        ) {
                             Text(
-                                text = "Band: ${state.wifiFrequencyGhz} GHz",
-                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                text = if (state.isWifiConnected) "${state.wifiLinkSpeedMbps} Mbps • ${state.wifiFrequencyGhz}GHz" else state.cellularNetworkType,
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.SemiBold),
+                                color = PulsarBlue,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
                             )
                         }
+                        Text(
+                            text = if (state.isWifiConnected) state.wifiSsid else "Cellular Data",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }

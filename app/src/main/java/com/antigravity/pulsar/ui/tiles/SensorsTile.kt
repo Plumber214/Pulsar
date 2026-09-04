@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sensors
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -76,29 +78,53 @@ fun SensorsTile(
             }
             TileSize.WIDE -> {
                 Row(
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
                         val p = state.pressureHpa
                         Text(
-                            text = if (p != null) "%.1f hPa".format(p) else "Barometer: N/A",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            text = if (p != null) "%.1f hPa".format(p) else "N/A",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
                             color = PulsarAmberLight
                         )
                         Text(
-                            text = "Pressure / Barometer",
+                            text = "Barometer",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+
+                    Column(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(4.dp),
+                            color = PulsarAmberLight.copy(alpha = 0.15f)
+                        ) {
+                            Text(
+                                text = "X:%.0f Y:%.0f Z:%.0f".format(state.accelX, state.accelY, state.accelZ),
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                                color = PulsarAmberLight,
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        }
+                        Text(
+                            text = "3-Axis Tilt",
+                            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+
                     Column(horizontalAlignment = Alignment.End) {
                         val lux = state.lightLux
                         Text(
-                            text = if (lux != null) "${lux.toInt()} Lux" else "Lux: N/A",
-                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary
+                            text = if (lux != null) "${lux.toInt()} Lux" else "N/A",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
                             text = "Ambient Light",
@@ -115,17 +141,18 @@ fun SensorsTile(
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
                             val p = state.pressureHpa
                             Text(
-                                text = if (p != null) "%.2f hPa".format(p) else "Barometer: N/A",
-                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                                text = if (p != null) "%.1f hPa".format(p) else "N/A",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                                 color = PulsarAmberLight
                             )
                             Text(
-                                text = "Atmospheric Pressure",
+                                text = "Barometer",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -133,27 +160,47 @@ fun SensorsTile(
                         Column(horizontalAlignment = Alignment.End) {
                             val lux = state.lightLux
                             Text(
-                                text = if (lux != null) "${lux.toInt()} Lux" else "Light Sensor: N/A",
-                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.primary
+                                text = if (lux != null) "${lux.toInt()} Lux" else "N/A",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Ambient Illuminance",
+                                text = "Ambient Light",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
-                    Text(
-                        text = "Accelerometer: X=%.1f  Y=%.1f  Z=%.1f m/s²".format(state.accelX, state.accelY, state.accelZ),
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = "${state.totalSensorsCount} Hardware Sensor chips detected on bus",
-                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "Tilt: X:%.1f Y:%.1f Z:%.1f".format(state.accelX, state.accelY, state.accelZ),
+                                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.SemiBold),
+                                color = PulsarAmberLight
+                            )
+                            Text(
+                                text = "Accelerometer (m/s²)",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            Text(
+                                text = "${state.totalSensorsCount} Active",
+                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
